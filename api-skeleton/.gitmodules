@@ -1,0 +1,8 @@
+[submodule ".docker/static-analysis/php"]
+	path = .docker/static-analysis/php
+	url = git@gitlab.com:youngsource/php-static-analysis.git
+
+
+[submodule "tax-shelter-ramingstool-frontend"]
+	path = node
+	url = git@gitlab.com:youngsource/tax-shelter-ramingstool-frontend.git

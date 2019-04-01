@@ -1,0 +1,10 @@
+/vendor/
+!/vendor/.gitkeep
+/logs/*
+!/logs/.gitkeep
+!/logs/README.md
+/.docker.env
+/.idea
+/.env
+.phpunit.result.cache
+php_errors.log

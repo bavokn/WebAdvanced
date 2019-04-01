@@ -1,0 +1,101 @@
+version: '3'
+
+networks:
+    app-tier:
+        driver: bridge
+
+services:
+    app:
+        container_name: app
+        build:
+            context: .
+            dockerfile: .docker/php/Dockerfile
+        networks:
+            - app-tier
+        volumes:
+            - ./logs/:/var/www/html/api/logs/
+            - ./src/:/var/www/html/api/src/
+            - ./public/:/var/www/html/api/public/
+        env_file: .docker.env
+        depends_on:
+            - mariadb
+            - redis
+        restart: always
+    nginx:
+        container_name: nginx
+        build:
+            context: .
+            dockerfile: .docker/nginx/Dockerfile
+        networks:
+            - app-tier
+        ports:
+            - "18080:80"
+            - "8080:8080"
+        volumes:
+            - ./public:/var/www/html/api/public
+            - ./node/public:/var/www/html/node/public
+            - metrics:/var/www/html/metrics
+            - analysis_results:/var/www/html/analysis_results
+            - docs:/var/www/html/docs
+        env_file: .docker.env
+        links:
+            - app:app
+            - node:node
+            - static_analysis:static_analysis
+        restart: always
+    mariadb:
+        container_name: mariadb
+        image: mariadb:latest
+        ports:
+         - "13306:3306"
+        env_file: .docker.env
+        restart: always
+    redis:
+        container_name: redis
+        image: redis:5-alpine
+        ports:
+            - "16379:6379"
+        env_file: .docker.env
+        restart: always
+    node:
+        container_name: node
+        build:
+            context: ./node
+            dockerfile: ./../.docker/node/Dockerfile
+        volumes:
+            - ./node/resources:/home/node/app/resources
+            - ./node/public:/home/node/app/public
+            - ./node/.env:/home/node/app/.env
+            - ./node/envloader.js:/home/node/app/envloader.js
+            - ./node/webpack.common.js:/home/node/app/webpack.common.js
+            - ./node/webpack.dev.js:/home/node/app/webpack.dev.js
+            - ./node/webpack.hot.js:/home/node/app/webpack.hot.js
+            - ./node/webpack.prod.js:/home/node/app/webpack.prod.js
+        networks:
+            - app-tier
+        env_file:
+          - .docker.env
+    static_analysis:
+        container_name: static_analysis
+        build:
+            context: .docker/static-analysis/php
+            dockerfile: Dockerfile
+        volumes:
+            - metrics:/metrics
+            - docs:/docs
+            - ./src:/code_to_analyse/src
+            - ./composer.json:/code_to_analyse/composer.json
+            - ./composer.lock:/code_to_analyse/composer.lock
+            - ./vendor:/libraries_to_support_analysis
+            - analysis_results:/results
+        networks:
+            - app-tier
+        env_file:
+            - .docker.env
+        depends_on:
+            - app
+
+volumes:
+    metrics:
+    docs:
+    analysis_results:
