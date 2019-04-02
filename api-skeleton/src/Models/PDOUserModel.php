@@ -1,8 +1,11 @@
 <?php
 
-namespace Models;
+namespace Laudis\Calculators\Models;
 
-class PDOUserModel implements userModel
+use http\Client\Curl\User;
+use Laudis\Calculators\Models\UserModel;
+
+class PDOUserModel implements UserModel
 {
     private $pdo;
 

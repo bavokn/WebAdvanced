@@ -18,6 +18,7 @@ return [
             'login' => 'bavo',
             'password' => 'sql',
         ],
+
         //setting up logger (not being used atm)
         'logger' => [
             'name' => 'twitter',

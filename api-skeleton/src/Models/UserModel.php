@@ -1,8 +1,9 @@
 <?php
 
-namespace Models;
+namespace Laudis\Calculators\Models;
 
-interface userModel
+// TODO - fix casing
+interface UserModel
 {
     public function listUsers();
 }

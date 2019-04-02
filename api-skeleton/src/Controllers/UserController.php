@@ -1,6 +1,6 @@
 <?php
 
-namespace Controllers;
+namespace Laudis\Calculators\Controllers;
 
 
 use Laudis\Calculators\Contracts\ResponseWriterInterface;
@@ -13,9 +13,6 @@ use Psr\Http\Message\ResponseInterface;
 /**
  * Class userController
  * @package controller
- * @TODO correct casing
- * @todo namespacing need plural
- * @todo preflight cors controller and base controller were there to help
  * hier de parameters veraderen naar write to response (geef de data mee)
  */
 class UserController extends BaseController
@@ -24,7 +21,8 @@ class UserController extends BaseController
 
     public function __construct(ResponseWriterInterface $responseWriter, UserModel $userModel)
     {
-        BaseController::__construct($responseWriter);
+        // TODO - use parent:: instead of BaseController::, the language construct is more generic
+        parent::__construct($responseWriter);
         $this->userModel = $userModel;
     }
 

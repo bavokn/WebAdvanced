@@ -1,23 +1,18 @@
 <?php
 
-namespace Controllers;
+namespace Laudis\Calculators\Controllers;
 
-
-use http\Message\Body;
 use Laudis\Calculators\Contracts\ResponseWriterInterface;
 use Laudis\Calculators\Controllers\BaseController;
-use Models\PDOUserModel;
 use Models\PostModel;
+use phpDocumentor\Reflection\Types\Parent_;
 use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ResponseInterface;
-
+use Psr\Http\Message\ServerRequestInterface;
 
 /**
  * Class userController
  * @package controller
- * @TODO correct casing
- * @todo namespacing need plural
- * @todo preflight cors controller and base controller were there to help
  * hier de parameters veraderen naar write to response (geef de data mee)
  */
 class PostController extends BaseController
@@ -26,7 +21,8 @@ class PostController extends BaseController
 
     public function __construct(ResponseWriterInterface $responseWriter, PostModel $postModel)
     {
-        BaseController::__construct($responseWriter);
+        // TODO - use parent instead of BaseController
+        parent::__construct($responseWriter);
         $this->postModel = $postModel;
     }
 
@@ -35,9 +31,9 @@ class PostController extends BaseController
      * @param ResponseInterface $response
      * @return ResponseInterface
      */
-    public function listUsers(RequestInterface $request, ResponseInterface $response): ResponseInterface
+    public function listUsers(ServerRequestInterface $request, ResponseInterface $response, array $params): ResponseInterface
     {
-        $id = $request['id'];
+        $id = $params['id'];
         $posts = $this->postModel->listPosts($id);
         return $this->writeToResponse($response, ['posts' => $posts]);
     }

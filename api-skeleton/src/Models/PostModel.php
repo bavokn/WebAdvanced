@@ -1,6 +1,6 @@
 <?php
 
-namespace Models;
+namespace Laudis\Calculators\Models;
 
 interface PostModel
 {

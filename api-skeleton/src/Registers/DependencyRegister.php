@@ -3,15 +3,17 @@
 namespace Laudis\Calculators\Registers;
 
 use Closure;
-use Controllers\UserController;
-use Controllers\PostController;
+use Laudis\Calculators\Controllers\UserController;
+use Laudis\Calculators\Controllers\PostController;
+use function foo\func;
 use function getenv;
 use Laudis\Calculators\Controllers\PreflightCorsController;
 use Laudis\Calculators\Strategies\WriteJsonToResponse;
 use Locale;
-use Models\PDOUserModel;
-use Models\PostModel;
-use Models\UserModel;
+use Laudis\Calculators\Models\PDOUserModel;
+use Laudis\Calculators\Models\PostModel;
+use Laudis\Calculators\Models\UserModel;
+
 use Monolog\Formatter\LineFormatter;
 use Monolog\Handler\StreamHandler;
 use Monolog\Logger;
@@ -46,11 +48,14 @@ final class DependencyRegister
         $container[NumberFormatter::class] = Closure::fromCallable([$this, 'buildNumberFormatter']);
         $container['locale'] = Closure::fromCallable([$this, 'buildLocale']);
 
+
+        // TODO - You have done a great job on this
         $container[UserModel::class] = function (ContainerInterface $container) {
             return new PDOUserModel(
                 $container[PDO::class]
             );
         };
+
         $container[PostModel::class] = function (ContainerInterface $container) {
             return new PDOUserModel(
                 $container[PDO::class]
@@ -68,6 +73,11 @@ final class DependencyRegister
                 $container[WriteJsonToResponse::class],
                 $container[userModel::class]
             );
+        };
+        // TODO - you still need to provide construction logic for the PDO instance
+        $container[PDO::class] = function (ContainerInterface $container){
+            $settings = $container["settings"]["PDO"];
+            return new PDO($settings[0],$settings[1],$settings[2]);
         };
 
         $container['logger'] = function(ContainerInterface $container) {
