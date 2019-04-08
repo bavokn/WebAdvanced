@@ -3,9 +3,7 @@
 namespace Laudis\Calculators\Controllers;
 
 use Laudis\Calculators\Contracts\ResponseWriterInterface;
-use Laudis\Calculators\Controllers\BaseController;
-use Models\PostModel;
-use phpDocumentor\Reflection\Types\Parent_;
+use Laudis\Calculators\Models\PostModel;
 use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
@@ -21,22 +19,34 @@ class PostController extends BaseController
 
     public function __construct(ResponseWriterInterface $responseWriter, PostModel $postModel)
     {
-        // TODO - use parent instead of BaseController
         parent::__construct($responseWriter);
         $this->postModel = $postModel;
     }
 
     /**
-     * @param RequestInterface $request
+     * @param ServerRequestInterface $request
      * @param ResponseInterface $response
+     * @param array $params
      * @return ResponseInterface
      */
-    public function listUsers(ServerRequestInterface $request, ResponseInterface $response, array $params): ResponseInterface
+    public function listPostsByID(ServerRequestInterface $request, ResponseInterface $response, array $params): ResponseInterface
     {
+        //get the id from serverrequestinterface or params
+        // TODO: you can find the id in the `params` parameter because the variable defined in the route
+        //  /twitter/posts/{id} is not defined in the request, but in the route.
+        //  You can only get variables from a request if they are explicitly given to you by the client
+        //  (eg through a form or a json type)
         $id = $params['id'];
-        $posts = $this->postModel->listPosts($id);
+        $posts = $this->postModel->listPostsByID($id);
         return $this->writeToResponse($response, ['posts' => $posts]);
     }
+
+    public function listAllPosts(ServerRequestInterface $request, ResponseInterface $response):ResponseInterface
+    {
+        $posts = $this->postModel->listAllPosts();
+        return $this->writeToResponse($response,['posts' => $posts]);
+    }
+
 }
 
 

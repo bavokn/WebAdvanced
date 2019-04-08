@@ -3,17 +3,15 @@
 namespace Laudis\Calculators\Registers;
 
 use Closure;
-use Laudis\Calculators\Controllers\UserController;
 use Laudis\Calculators\Controllers\PostController;
-use function foo\func;
-use function getenv;
 use Laudis\Calculators\Controllers\PreflightCorsController;
-use Laudis\Calculators\Strategies\WriteJsonToResponse;
-use Locale;
+use Laudis\Calculators\Controllers\UserController;
+use Laudis\Calculators\Models\PDOPostModel;
 use Laudis\Calculators\Models\PDOUserModel;
 use Laudis\Calculators\Models\PostModel;
 use Laudis\Calculators\Models\UserModel;
-
+use Laudis\Calculators\Strategies\WriteJsonToResponse;
+use Locale;
 use Monolog\Formatter\LineFormatter;
 use Monolog\Handler\StreamHandler;
 use Monolog\Logger;
@@ -25,6 +23,7 @@ use Rakit\Validation\Validator;
 use Slim\Http\Body;
 use Slim\Http\Headers;
 use Slim\Http\Response;
+use function getenv;
 
 /**
  * Class DependencyRegister
@@ -48,7 +47,6 @@ final class DependencyRegister
         $container[NumberFormatter::class] = Closure::fromCallable([$this, 'buildNumberFormatter']);
         $container['locale'] = Closure::fromCallable([$this, 'buildLocale']);
 
-
         // TODO - You have done a great job on this
         $container[UserModel::class] = function (ContainerInterface $container) {
             return new PDOUserModel(
@@ -57,30 +55,29 @@ final class DependencyRegister
         };
 
         $container[PostModel::class] = function (ContainerInterface $container) {
-            return new PDOUserModel(
+            return new PDOPostModel(
                 $container[PDO::class]
             );
         };
 
-        $container[UserController::class] = function (ContainerInterface $container){
+        $container[UserController::class] = function (ContainerInterface $container) {
             return new UserController(
                 $container[WriteJsonToResponse::class],
-                $container[userModel::class]
+                $container[UserModel::class]
             );
         };
-        $container[PostController::class] = function (ContainerInterface $container){
-            return new UserController(
+        $container[PostController::class] = function (ContainerInterface $container) {
+            return new PostController(
                 $container[WriteJsonToResponse::class],
-                $container[userModel::class]
+                $container[PostModel::class]
             );
         };
-        // TODO - you still need to provide construction logic for the PDO instance
-        $container[PDO::class] = function (ContainerInterface $container){
+        $container[PDO::class] = function (ContainerInterface $container) {
             $settings = $container["settings"]["PDO"];
-            return new PDO($settings[0],$settings[1],$settings[2]);
+            return new PDO($settings['dsn'], $settings['username'], $settings['passwd']);
         };
 
-        $container['logger'] = function(ContainerInterface $container) {
+        $container['logger'] = function (ContainerInterface $container) {
             $logger = $container['settings']['logger'];
             $log = new Logger($logger['name']);
             $handler = new StreamHandler($logger['path'], $logger['level']);

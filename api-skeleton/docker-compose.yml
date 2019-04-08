@@ -44,6 +44,8 @@ services:
             - static_analysis:static_analysis
         restart: always
     mariadb:
+        networks:
+          - app-tier
         container_name: mariadb
         image: mariadb:latest
         ports:

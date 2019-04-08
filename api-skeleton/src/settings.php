@@ -14,9 +14,9 @@ return [
 
         //creates PDO
         'PDO' => [
-            'dsn' => 'mysql:dbname=twitterdb;host=127.0.0.1',
-            'login' => 'bavo',
-            'password' => 'sql',
+            'dsn' => 'mysql:host=mariadb;dbname=twitterdb',
+            'username' => 'root',
+            'passwd' => 'password'
         ],
 
         //setting up logger (not being used atm)
@@ -25,6 +25,5 @@ return [
             'level' => Monolog\Logger::DEBUG,
             'path' => __DIR__ . '/../logs/app.log',
         ],
-
     ],
 ];

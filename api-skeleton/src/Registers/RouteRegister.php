@@ -21,12 +21,13 @@ final class RouteRegister
     {
         $app->options('/{routes:.+}', PreflightCorsController::class . ':allowOptions');
 
-        // This is the middleware
-        // It will add the Access-Control-Allow-Methods header to every request
-
         $app->get('/twitter/users',UserController::class . ":listUsers");
 
-        $app->get('/twitter/posts/{id}', PostController::class . ":listPosts");
+        $app->get('/twitter/posts/{id}', PostController::class . ":listPostsByID");
+
+        $app->get('/twitter/posts', PostController::class . ":listAllPosts");
+
+        $app->delete("/twitter/delete/{id}", UserController::class . ":deleteUser");
 
         # Fallback route because options route now triggers Method Not Allowed 405.
         $app->map(self::FALLBACK_METHODS, '/{routes:.+}', PreflightCorsController::class . ':fallback');

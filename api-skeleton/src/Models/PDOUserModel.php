@@ -2,8 +2,8 @@
 
 namespace Laudis\Calculators\Models;
 
-use http\Client\Curl\User;
-use Laudis\Calculators\Models\UserModel;
+
+use phpDocumentor\Reflection\DocBlock\Tags\Param;
 
 class PDOUserModel implements UserModel
 {
@@ -14,69 +14,61 @@ class PDOUserModel implements UserModel
         $this->pdo = $pdo;
     }
 
-    public function listUsers()
+    public function listUsers() : array
     {
-        $statement = $this->pdo->prepare('SELECT * FROM users');
+        $statement = $this->pdo->prepare("SELECT * FROM users");
         $statement->execute();
         $statement->bindColumn(1, $id, \PDO::PARAM_INT);
         $statement->bindColumn(2, $firstName, \PDO::PARAM_STR);
+        $statement->bindColumn(3, $lastName, \PDO::PARAM_STR);
 
-        $persons = [];
+        $users = [];
         while ($statement->fetch(\PDO::FETCH_BOUND)) {
-            $persons[] = ['id' => $id, 'name' => $firstName];
+            $users[] = ['id' => $id, 'firstName' => $firstName, 'LastName' => $lastName];
         }
-        return $persons;
+        return $users;
     }
 
 
-    public function addUserByIdAndName($id, $firstName,$lastName)
+    /**
+     * add a user in the database
+     */
+    public function addUser()
     {
-        $this->validateId($id);
-        $this->validateName($firstName);
-        $this->validateName($lastName);
-
-        $statement = $this->pdo->prepare('INSERT into users(id,firstname, lastname) VALUES (:id,:firstName,:lastName) ON DUPLICATE KEY UPDATE id=:id, firstName=:firstName, lastName =: lastName');
-        $statement->bindParam(':id', $id, \PDO::PARAM_INT);
-        $statement->bindParam(':name', $name, \PDO::PARAM_STR);
-        $statement->execute();
-
-        return ['id' => $id, 'firstName' => $firstName,'lastName' => $lastName];
-    }
-
-
-    public function idExists($id)
-    {
-        $this->validateId($id);
-
-        $statement = $this->pdo->prepare('INSERT into users(id,firstName,lastName) VALUES (:id,:firstName,:lastName)');
-        $statement->bindParam(':id', $id, \PDO::PARAM_INT);
-        $statement->bindParam(':name', $name, \PDO::PARAM_STR);
-        $statement->execute();
-
-        $statement = $this->pdo->prepare('SELECT id from users WHERE id=:id');
-        $statement->bindParam(':id', $id, \PDO::PARAM_INT);
-        $statement->execute();
-        if ($statement->fetch() === FALSE) {
-            return FALSE;
-        }
-        return TRUE;
+        // TODO: Implement addUser() method.
     }
 
     /**
-     * Validation can happen via Validator class
-     * @param $id
+     * change a users firstname or lastname
      */
-    private function validateId($id){
-        if (!(is_string($id) &&  preg_match("/^[0-9]+$/", $id) && (int)$id > 0)) {
-            throw new \InvalidArgumentException("id moet een int > 0 bevatten ");
-        }
-    }
-
-    private function validateName($name)
+    public function updateUser($id, $firstName, $lastName)
     {
-        if (!(is_string($name) && strlen($name) >= 2)) {
-            throw new \InvalidArgumentException("name moet een string met minstens 1 karakters zijn");
-        }
+        // TODO: Implement updateUser() method.
     }
 
+    /**
+     * delete a user with the userId
+     */
+    public function deleteUser($id)
+    {
+        try {
+            $statement = $this->pdo->prepare("DELETE FROM users  WHERE id = $id");
+            $statement->execute();
+
+            $getUser = $this->pdo->prepare("SELECT * FROM posts WHERE id=$id");
+            $getUser->execute();
+            $statement->bindColumn(1, $firstname, \PDO::PARAM_STR);
+            $statement->bindColumn(2, $lastname, \PDO::PARAM_STR);
+
+            $user = [];
+            while ($statement->fetch(\PDO::FETCH_BOUND)) {
+                $user[] = ["deleted "=> "succes ",'firstName' => $firstname, '$lastName' => $lastname];
+            }
+
+            return $user;
+        }
+        catch (\PDOException $e){
+            return $e->getMessage();
+        }
+    }
 }
