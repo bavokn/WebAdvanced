@@ -15,17 +15,19 @@ interface PostModel
      * @param $id
      * @return mixed
      */
-    public function listPostsByID($id);
+    public function listPostsByID($id):array ;
 
     /**
      * add a post to the database with the id of the user
      * can be altered to firstname and lastname
      * @param $id
+     * @param $text
+     * @return array
      */
-    public function addPost($id);
+    public function addPost($id, $text ):array ;
 
     /**
      * delete a post from the database with the postId
      */
-    public function deletePost($postId);
+    public function deletePost($postId):array ;
 }

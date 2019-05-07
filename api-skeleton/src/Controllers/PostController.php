@@ -31,12 +31,7 @@ class PostController extends BaseController
      */
     public function listPostsByID(ServerRequestInterface $request, ResponseInterface $response, array $params): ResponseInterface
     {
-        //get the id from serverrequestinterface or params
-        // TODO: you can find the id in the `params` parameter because the variable defined in the route
-        //  /twitter/posts/{id} is not defined in the request, but in the route.
-        //  You can only get variables from a request if they are explicitly given to you by the client
-        //  (eg through a form or a json type)
-        $id = $params['id'];
+        $id = $params['id'] ;
         $posts = $this->postModel->listPostsByID($id);
         return $this->writeToResponse($response, ['posts' => $posts]);
     }
@@ -46,7 +41,19 @@ class PostController extends BaseController
         $posts = $this->postModel->listAllPosts();
         return $this->writeToResponse($response,['posts' => $posts]);
     }
+    public function addPost(ServerRequestInterface $request, ResponseInterface $response, array $params): ResponseInterface{
+        $body = $request->getParsedBody();
+        $id = $body["id"];
+        $text = $body['text'];
+        $post = $this->postModel->addPost($id,$text);
+        return $this->writeToResponse($response,["added" => $post]);
+    }
 
+    public function deletePost(ServerRequestInterface $request, ResponseInterface $response, array $params): ResponseInterface{
+        $postID = $params["postID"];
+        $post = $this->postModel->deletePost($postID);
+        return $this->writeToResponse($response , ["deleted" => $post]);
+    }
 }
 
 

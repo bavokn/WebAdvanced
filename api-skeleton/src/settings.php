@@ -14,9 +14,9 @@ return [
 
         //creates PDO
         'PDO' => [
-            'dsn' => 'mysql:host=mariadb;dbname=twitterdb',
+            'dsn' => 'mysql:host=mariadb;dbname=twitterdb;charset=utf8',
             'username' => 'root',
-            'passwd' => 'password'
+            'passwd' => 'password',
         ],
 
         //setting up logger (not being used atm)

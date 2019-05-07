@@ -15,7 +15,7 @@ use Psr\Http\Message\ResponseInterface as Response;
 abstract class BaseController
 {
     /** @var ResponseWriterInterface */
-    //create a responsewriter so view is not actually necessary ==> returns a json file TODO - what do you mean?
+    //create a responsewriter so view is not actually necessary ==> returns a json file
     private $responseWriter;
 
     /**

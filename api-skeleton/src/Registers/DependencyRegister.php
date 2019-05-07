@@ -47,7 +47,6 @@ final class DependencyRegister
         $container[NumberFormatter::class] = Closure::fromCallable([$this, 'buildNumberFormatter']);
         $container['locale'] = Closure::fromCallable([$this, 'buildLocale']);
 
-        // TODO - You have done a great job on this
         $container[UserModel::class] = function (ContainerInterface $container) {
             return new PDOUserModel(
                 $container[PDO::class]
@@ -122,7 +121,6 @@ final class DependencyRegister
         return new Response(
             200,
             new Headers([
-                'Content-Type' => 'application/json;charset=utf-8',
                 'Access-Control-Allow-Origin' => '*',
                 'Access-Control-Allow-Headers' => 'X-Requested-With, Content-Type, Accept, Origin, Authorization',
                 'Access-Control-Allow-Methods' => 'GET, POST, PUT, DELETE, PATCH, OPTIONS'
